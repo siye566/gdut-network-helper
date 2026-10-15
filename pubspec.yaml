@@ -1,0 +1,18 @@
+name: gdut_network_helper
+description: 广东工业大学大学城校区无线校园网认证助手。
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.9.0 <4.0.0'
+  flutter: '>=3.35.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  connectivity_plus: 7.3.2
+  flutter_secure_storage: 11.2.0
+  url_launcher: 6.3.3
+
+flutter:
+  uses-material-design: true
