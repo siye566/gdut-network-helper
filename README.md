@@ -2,9 +2,9 @@
 
 **面向广东工业大学大学城校区的无线校园网认证助手。** 从宿舍 `gdut-宿舍号` 切到教学区 `gdut` 后，如果学校要求重新认证，助手会在运行期间检查当前认证状态，并在需要时使用你保存的账号登录。
 
-项目使用 Flutter 编写，共用 Windows、macOS、Android、iOS 的界面与认证核心。当前优先提供 Windows x64 打包流程；其他平台仍需自行构建和实机验证。手机目前需要打开助手，尚未实现切网后全程无操作的后台认证。
+项目使用 Flutter 编写，共用 Windows、macOS、Android、iOS 的界面与认证核心。已提供 Windows x64 预览安装包与便携版；其他平台仍需自行构建和实机验证。手机目前需要打开助手，尚未实现切网后全程无操作的后台认证。
 
-[下载安装包](https://github.com/siye566/gdut-network-helper/releases) · [平台接入说明](docs/platforms.md) · [协议核实记录](docs/protocol.md) · [反馈问题](https://github.com/siye566/gdut-network-helper/issues)
+[下载 Windows 安装包](https://github.com/siye566/gdut-network-helper/releases/download/v0.1.0-preview.1/gdut-network-helper-0.1.0-windows-x64-setup.exe) · [下载便携 ZIP](https://github.com/siye566/gdut-network-helper/releases/download/v0.1.0-preview.1/gdut-network-helper-0.1.0-windows-x64-portable.zip) · [版本说明](https://github.com/siye566/gdut-network-helper/releases/tag/v0.1.0-preview.1) · [平台接入说明](docs/platforms.md) · [协议核实记录](docs/protocol.md) · [反馈问题](https://github.com/siye566/gdut-network-helper/issues)
 
 > 这是个人开发的辅助工具，并非学校官方客户端。实际适配范围为已核实的大学城认证入口 `10.0.3.2` 与当前无线 AC 配置，其他校区、宿舍或认证页面可能需要进一步适配。
 
@@ -31,15 +31,15 @@
 
 | 平台 | 运行期间的检查与认证 | 后台与退出后的行为 | 分发方式 |
 | --- | --- | --- | --- |
-| Windows x64 | 手动检查、网络变化后检查、定时检查 | 最小化可继续；退出后停止；尚无托盘与开机启动 | 优先提供安装包、便携 ZIP，见 Release |
+| Windows x64 | 手动检查、网络变化后检查、定时检查 | 最小化可继续；退出后停止；尚无托盘与开机启动 | 已发布安装包、便携 ZIP 预览版，见 Release |
 | macOS | 共用桌面认证逻辑 | 保持进程运行时检查；退出后停止；尚无托盘与开机启动 | 源码构建，需 Mac 开发与签名环境 |
 | Android | App 前台检查，返回前台后重新检查；请求绑定 Wi-Fi | 暂无后台服务或锁屏保活，不能保证后台切网自动登录 | 源码构建与设备验证 |
 | iOS / iPadOS | App 前台检查，返回前台后重新检查 | 暂无后台切网触发、快捷指令或 HotspotHelper 接入 | 需 Mac、Xcode 和开发签名 |
 
 ## Windows 安装与首次使用
 
-1. 打开 [最新版本页面](https://github.com/siye566/gdut-network-helper/releases)，检查版本说明与适用架构。Windows 安装包是否已提供，以该页实际附件为准。
-2. 有安装包时下载名称含 `windows-x64-setup.exe` 的附件并运行；便携版下载含 `windows-x64-portable.zip` 的附件，将**整个压缩包**解压后运行 `gdut_network_helper.exe`，保留同目录中的 DLL 与 `data/`。不要只复制主程序。
+1. 打开 [最新版本页面](https://github.com/siye566/gdut-network-helper/releases)，检查版本说明与适用架构。当前版本为 `v0.1.0-preview.1`，提供安装版与便携版。
+2. 下载名称含 `windows-x64-setup.exe` 的附件并运行；便携版下载含 `windows-x64-portable.zip` 的附件，将**整个压缩包**解压后运行 `gdut_network_helper.exe`，保留同目录中的 DLL 与 `data/`。不要只复制主程序。
 3. 可对照该版本的 `SHA256SUMS.txt` 核验下载文件。在 PowerShell 中运行 `Get-FileHash .\下载的文件名.exe -Algorithm SHA256`，比较哈希值。
 4. 连接 `gdut` 或宿舍无线网。首次使用先在浏览器确认学校门户能打开、自己的账号能够正常登录。
 5. 打开助手，输入网页登录使用的**完整账号**与密码，点击“保存账号”。账号只需在自己的设备输入，不要提交到 GitHub 或反馈区。
@@ -71,6 +71,7 @@
 - 严格匹配已核实的 Dr.COM 配置与脚本版本 `4.1.3`；配置变化会暂停，不猜测新参数。
 - 尚未适配或核实其他校区、`10.0.3.6`、IPv6 认证、MD5 模式、验证码及额外运营商选择。
 - 2026-10-15 已只读读取现场门户、官方脚本、动态配置与在线状态，并运行 Node 诊断；只读访问可能经过有线或代理路径，不能作为无线认证成功的证据。
+- 2026-10-18 已通过 [Windows 构建流水线](https://github.com/siye566/gdut-network-helper/actions/runs/39088292342) 完成 Release 编译、打包、静默安装、8 秒进程启动与卸载检查；构建源码提交为 `1ecde00`。这些检查未覆盖手工界面交互、保存真实账号或校园网登录。
 - **尚未使用真实账号验证登录、宿舍与教学区之间的无线切换、各平台的安全存储与手机权限。** 构建成功、安装成功、真实校园认证成功是不同阶段，具体发布产物的验证情况见对应 Release 说明。
 
 完整字段、协议判断与资料来源见 [协议核实记录](docs/protocol.md)。
@@ -86,6 +87,8 @@ node tool/inspect.mjs
 工具仅访问学校入口与状态接口，不登录、不注销、不提交账号。输出门户能否识别、认证状态和能否读取当前 IP，不输出账号、姓名或 MAC。可用于区分“门户不可达”与“认证页面尚未支持”，不替代真实登录验证。
 
 ## 从源码运行与构建
+
+本次预览版构建使用 Flutter **3.47.7** / Dart **3.13.5**，已提交对应 `pubspec.lock`，GitHub Actions 固定此 Flutter 版本。
 
 基础环境：Flutter stable（项目最低声明 Flutter 3.35 / Dart 3.9）、Node.js 18+，以及目标平台的原生开发工具。插件可能有更高的工具链要求，详情见 [平台接入说明](docs/platforms.md)。
 
