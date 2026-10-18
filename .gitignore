@@ -8,3 +8,8 @@ android/local.properties
 ios/Pods/
 macos/Pods/
 *.log
+dist/
+windows/
+macos/
+android/
+ios/

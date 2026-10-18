@@ -8,7 +8,15 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const platforms = ['windows', 'macos', 'android', 'ios'];
+const supportedPlatforms = ['windows', 'macos', 'android', 'ios'];
+const requested = process.argv.slice(2);
+if (requested.length > 1 || (requested.length && !requested[0].startsWith('--platforms='))) {
+  throw new Error('Usage: node tool/bootstrap.mjs [--platforms=windows,macos,android,ios]');
+}
+const platforms = requested.length ? [...new Set(requested[0].slice('--platforms='.length).split(','))] : supportedPlatforms;
+if (!platforms.length || platforms.some((platform) => !supportedPlatforms.includes(platform))) {
+  throw new Error('Unsupported target platform. Choose windows, macos, android or ios.');
+}
 const exists = async (name) => access(name).then(() => true, () => false);
 const read = (name) => readFile(name, 'utf8');
 const write = async (name, content) => {
@@ -168,13 +176,18 @@ async function main() {
   const generated = path.join(temporary, 'gdut_network_helper');
   const flutter = process.platform === 'win32' ? 'flutter.bat' : 'flutter';
   // Keep shell arguments fixed; pass a temporary path containing spaces via cwd.
-  const result = spawnSync(flutter, ['create', '--platforms=windows,macos,android,ios', '--empty', '--no-pub', '--project-name', 'gdut_network_helper', '--org', 'cn.gduthelper', 'gdut_network_helper'], {
+  const result = spawnSync(flutter, ['create', `--platforms=${platforms.join(',')}`, '--empty', '--no-pub', '--project-name', 'gdut_network_helper', '--org', 'cn.gduthelper', 'gdut_network_helper'], {
     cwd: temporary, stdio: 'inherit', shell: process.platform === 'win32'
   });
   if (result.error || result.status !== 0) throw new Error('Flutter shell generation failed. Install Flutter and put flutter on PATH first.');
   for (const platform of missing) {
     const source = path.join(generated, platform);
     if (!await exists(source)) throw new Error(`Flutter did not generate ${platform}/`);
+    if (platform === 'windows') {
+      const runner = path.join(source, 'runner/main.cpp');
+      const cpp = await read(runner);
+      await write(runner, cpp.replace('L"gdut_network_helper"', 'L"GDUT Network Helper"'));
+    }
     if (platform === 'android') await configureAndroid(source);
     if (platform === 'ios' || platform === 'macos') await configureApple(source, platform);
   }
